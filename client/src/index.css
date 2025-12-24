@@ -1,0 +1,68 @@
+/* Import Holiday Font */
+@import url('https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&family=Inter:wght@400;600;700&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --color-santa-red: #D42426;
+  --color-santa-green: #165B33;
+  --color-santa-gold: #F8B229;
+  --color-snow-white: #F0F4F8;
+  
+  --font-holiday: "Mountains of Christmas", cursive;
+  --font-sans: "Inter", sans-serif;
+
+  --animate-fade-in: fadeIn 0.5s ease-out;
+  --animate-snow-fall: snowFall 10s linear infinite;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-santa-red);
+    color: var(--color-snow-white);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes snowFall {
+  0% { transform: translateY(-100vh) rotate(0deg); }
+  100% { transform: translateY(100vh) rotate(360deg); }
+}
+
+/* Premium Glassmorphism Utilities */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.input-field {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.input-field:focus {
+  border-color: var(--color-santa-gold);
+  box-shadow: 0 0 0 4px rgba(248, 178, 41, 0.2);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-santa-gold) 0%, #FFD700 100%);
+  color: var(--color-santa-red);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -5px rgba(248, 178, 41, 0.5);
+}
