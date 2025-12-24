@@ -9,6 +9,7 @@ const RevealPage = () => {
     const { groupId } = useParams();
     const { fetchGroup, currentGroup, loading, error } = useSanta();
     const [selectedId, setSelectedId] = useState('');
+    const [secretCode, setSecretCode] = useState('');
     const [match, setMatch] = useState(null);
     const [revealing, setRevealing] = useState(false);
 
@@ -17,19 +18,17 @@ const RevealPage = () => {
     }, [groupId]);
 
     const handleReveal = async (e) => {
-        // Prevent any default behavior that might dismiss the prompt
-        if (e) {
-            e.preventDefault();
-            e.stopPropagation();
+        e.preventDefault();
+        
+        if (!selectedId) {
+            alert("Please select your name first!");
+            return;
         }
         
-        if (!selectedId) return;
-        
-        // Small delay to ensure event handlers complete
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
-        const code = prompt("Enter your Secret Code:");
-        if (!code) return;
+        if (!secretCode.trim()) {
+            alert("Please enter your secret code!");
+            return;
+        }
 
         setRevealing(true);
 
@@ -44,9 +43,10 @@ const RevealPage = () => {
             }
 
             // Client-side code verification
-            if (participant.code !== code) {
+            if (participant.code !== secretCode.trim()) {
                 alert("Incorrect Code! Try again.");
                 setRevealing(false);
+                setSecretCode(''); // Clear the input
                 return;
             }
 
@@ -113,13 +113,17 @@ const RevealPage = () => {
     return (
         <div className="space-y-6 text-center max-w-lg mx-auto">
             <h2 className="text-2xl font-bold text-white">Who are you?</h2>
-            <p className="text-white/70 text-sm">Find your name to see who you got!</p>
+            <p className="text-white/70 text-sm">Find your name and enter your secret code to reveal your match!</p>
             
             <div className="grid grid-cols-1 gap-2 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
                 {currentGroup.participants.map(p => (
                     <button
                         key={p._id}
-                        onClick={() => setSelectedId(p._id)}
+                        type="button"
+                        onClick={() => {
+                            setSelectedId(p._id);
+                            setSecretCode(''); // Clear code when switching participants
+                        }}
                         className={`p-3 rounded-lg text-left transition-all flex items-center justify-between group ${
                             selectedId === p._id 
                             ? 'bg-santa-gold text-santa-red font-bold shadow-lg scale-102' 
@@ -127,20 +131,40 @@ const RevealPage = () => {
                         }`}
                     >
                         <span>{p.name}</span>
-                        {/* Show lock icon if not revealed? Or just simple list */}
                         {selectedId === p._id && <Gift size={16} className="animate-pulse"/>}
                     </button>
                 ))}
             </div>
 
-            <button 
-                type="button"
-                onClick={handleReveal}
-                disabled={!selectedId || revealing}
-                className="w-full bg-santa-red border-2 border-dashed border-santa-gold hover:bg-red-700 text-white font-bold py-4 px-6 rounded-full text-xl shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed mt-4 transform hover:scale-105 transition-all flex items-center justify-center gap-2 uppercase tracking-widest font-holiday"
-            >
-                {revealing ? 'Unwrapping...' : 'Reveal My Match! 🎁'}
-            </button>
+            <form onSubmit={handleReveal} className="space-y-4 mt-6">
+                <div className="glass-panel p-4 rounded-xl text-left">
+                    <label className="block text-santa-gold font-bold text-sm mb-2 uppercase tracking-wider">
+                        🔐 Enter Your Secret Code
+                    </label>
+                    <input 
+                        type="password"
+                        value={secretCode}
+                        onChange={(e) => setSecretCode(e.target.value)}
+                        className="w-full p-4 rounded-xl bg-white/90 text-santa-green focus:outline-none focus:ring-2 focus:ring-santa-gold border-2 border-transparent focus:border-santa-gold transition-all"
+                        placeholder="Your secret code..."
+                        disabled={!selectedId || revealing}
+                        autoComplete="off"
+                    />
+                    {!selectedId && (
+                        <p className="text-white/50 text-xs mt-2 italic">
+                            ↑ Select your name first
+                        </p>
+                    )}
+                </div>
+                
+                <button 
+                    type="submit"
+                    disabled={!selectedId || !secretCode.trim() || revealing}
+                    className="w-full bg-santa-red border-2 border-dashed border-santa-gold hover:bg-red-700 text-white font-bold py-4 px-6 rounded-full text-xl shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 transition-all flex items-center justify-center gap-2 uppercase tracking-widest font-holiday"
+                >
+                    {revealing ? 'Unwrapping...' : 'Reveal My Match! 🎁'}
+                </button>
+            </form>
             
             <Link to="/" className="inline-block mt-8 text-white/50 text-xs hover:text-white flex items-center justify-center gap-1">
                 <Home size={12}/> create new group
