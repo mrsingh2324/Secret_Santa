@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { SantaProvider } from './context/SantaContext';
 import SnowLayout from './components/SnowLayout';
 import HomePage from './pages/HomePage';
+import JoinPage from './pages/JoinPage';
 import RevealPage from './pages/RevealPage';
 import AdminDashboard from './components/AdminDashboard';
 
@@ -13,6 +14,7 @@ function App() {
         <SnowLayout>
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/join/:groupId" element={<JoinPage />} />
             <Route path="/reveal/:groupId" element={<RevealPage />} />
             <Route path="/admin/:groupId" element={<AdminDashboard />} />
             {/* Fallback */}
